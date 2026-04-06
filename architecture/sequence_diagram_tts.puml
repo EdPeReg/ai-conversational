@@ -1,0 +1,69 @@
+@startuml TTS
+
+actor User
+participant "Whatsapp" as whatsapp
+participant "TTS" as tts
+participant "Backend" as backend
+participant "Memory" as memory
+participant "AI" as ai
+participant "Tools" as tools
+database "DB" as db
+
+note over User
+    The purpose of this diagram is to show the sequence
+    of TTS, same logic applies when is STT.
+end note
+
+
+User -> whatsapp : Write a text message
+activate whatsapp
+
+whatsapp -> backend : POST user message
+activate backend
+
+backend -> db : Query user information
+activate db
+
+db --> backend : User information
+deactivate db
+
+
+backend -> memory : Read user context
+activate memory
+
+memory --> backend : User context
+deactivate memory
+
+backend -> ai : Send user message, profile and current context
+activate ai
+
+
+ai -> tools : Choose what tool is the best
+activate tools
+
+tools -> db: Execute action
+
+tools --> ai : Result of tool execution
+deactivate tools
+
+ai --> backend : User answer
+deactivate ai
+
+backend -> memory : Update context memory
+
+backend --> tts : AI information
+activate tts
+deactivate backend
+
+tts -> tts : Convert AI information to speech
+
+tts --> User : Speech infomation
+deactivate tts
+
+User -> backend : Ends session
+activate backend
+
+backend -> db : Store user information
+backend -> memory : Clean memory context
+
+@enduml
